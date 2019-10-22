@@ -35,7 +35,7 @@ python_config = PythonConfig(
     python_path=python_path,
     #python_code_path='sample_pytorch.py',
     python_code_path=workdir+'/detect_one.py',
-    python_inputs={'image': 'NDARRAY'},
+    python_inputs={'image': 'STR'},
     python_outputs={'nboxes': 'STR'},
 )
 

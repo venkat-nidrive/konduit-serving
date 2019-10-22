@@ -18,7 +18,7 @@ port = 9233
 
 client = Client(input_names=input_names,
                 output_names=output_names,
-                input_type='NUMPY',
+                input_type='JSON',
                 return_output_type='JSON',
                 endpoint_output_type='RAW',
                 url='http://localhost:' + str(port))

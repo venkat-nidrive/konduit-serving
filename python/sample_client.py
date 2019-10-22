@@ -47,7 +47,7 @@ image = 'test'
 #ArrayList = autoclass("java.util.ArrayList")
 try:
     #predicted = client.predict(data_input)
-    predicted = client.predict({'image': 'test'})
+    predicted = client.predict({'default': 'test'})
     print(predicted)
     #server.stop()
 except Exception as e:

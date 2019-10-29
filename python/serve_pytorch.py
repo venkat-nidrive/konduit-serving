@@ -14,6 +14,7 @@ import time
 import random
 
 import sys
+
 python_path = ':'.join(sys.path)
 workdir = '/home/ubuntu/work/Ultra-Light-Fast-Generic-Face-Detector-1MB'
 python_path += ':' + workdir
@@ -30,60 +31,28 @@ serving_config = ServingConfig(http_port=port,
                                log_timings=True,
                                parallel_inference_config=parallel_inference_config)
 
-
 python_config = PythonConfig(
     python_path=python_path,
-    #python_code_path='sample_pytorch.py',
     python_code_path=workdir+'/detect_one.py',
-    python_inputs={'image': 'STR'},
-    python_outputs={'nboxes': 'STR'},
+    python_inputs={'default': 'STR'},
+    python_outputs={'default': 'STR'},
 )
 
 python_pipeline_step = PythonPipelineStep(input_names=input_names,
                                           output_names=output_names,
                                           input_schemas=({'default': ['String']}),
                                           output_schemas=({'default': ['String']}),
-                                          input_column_names={'default': ['image']},
-                                          output_column_names={'default': ['nboxes']},
+                                          input_column_names={'default': ['default']},
+                                          output_column_names={'default': ['default']},
                                           python_configs={'default': python_config})
 
 inference = InferenceConfiguration(serving_config=serving_config,
                                    pipeline_steps=[python_pipeline_step])
 
 server = Server(config=inference,
+                #extra_start_args='-agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=5005',  # intellij remote debug
                 extra_start_args='-Xmx8g',
                 jar_path='konduit.jar')
 server.start()
 print('Process started.')
-time.sleep(3)
-#print('Process started. Sleeping 10 seconds.')
-
-#client = Client(input_names=input_names,
-#                output_names=output_names,
-#                input_type='NUMPY',
-#                endpoint_output_type='NUMPY',
-#                url='http://localhost:' + str(port))
-#
-#import cv2
-#orig_image = cv2.imread(workdir + '/imgs/1.jpg')
-#image = cv2.cvtColor(orig_image, cv2.COLOR_BGR2RGB)
-#image = image.astype(np.float32)
-#print(image.shape)
-##image /= 255.
-#data_input = {
-#    #'default': np.load('./data/input-0.npy'),
-#    'default': image
-#}
-#print(type(orig_image))
-
-#time.sleep(10)
-
-#assert is_port_in_use(port)
-
-#try:
-#    predicted = client.predict(data_input)
-#    print(predicted)
-#    server.stop()
-#except Exception as e:
-#    print(e)
-#    server.stop()
+time.sleep(10)

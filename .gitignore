@@ -53,3 +53,11 @@ konduit-serving.pid
 # uberjar creation
 pipelines.jar
 konduit.jar
+
+# model file
+*.zip
+*.h5
+*.pb
+*.pt
+*.pth
+

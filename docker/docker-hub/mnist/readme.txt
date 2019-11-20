@@ -1,0 +1,1 @@
+java -d64 -cp D:\Users\chiawei\konduit\Github\Keras_mnist_python\konduit-serving.jar ai.konduit.serving.configprovider.KonduitServingMain --configPath D:\Users\chiawei\konduit\Github\Keras_mnist_python\inference-image-config.json

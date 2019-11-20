@@ -25,9 +25,12 @@ WORKDIR /konduit
 
 # Install app dependencies
 COPY requirements.txt /konduit
-RUN pip install -r requirements.txt
+#RUN pip install -r requirements.txt
 
-# Copy over konduit.jar
-COPY konduit.jar /konduit
+# Copy over konduit.jar and dependencies
+COPY mnist /konduit/mnist
+
+EXPOSE 65322
 
 CMD ["java", "-version"]
+#CMD tail -f /dev/null

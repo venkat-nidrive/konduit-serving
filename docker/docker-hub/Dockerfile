@@ -1,36 +1,45 @@
-FROM alpine:3.10.3
+FROM debian:latest
 
-RUN apk add --update \
-    python3 \
-    python3-dev \
-    py-pip \
-    build-base \
-    bash \
-  && pip3 install --no-cache-dir --upgrade pip \
-  && rm -rf /var/cache/* \
-  && rm -rf /root/.cache/*
+ENV LANG=C.UTF-8 LC_ALL=C.UTF-8
+ENV PATH /opt/conda/bin:$PATH
 
-RUN cd /usr/bin \
-  && ln -sf python3 python \
-  && ln -sf pip3 pip
+RUN apt-get update --fix-missing && \
+    apt-get install -y wget bzip2 ca-certificates curl git && \
+    apt-get clean && \
+    rm -rf /var/lib/apt/lists/*
 
-# Install Java8
-RUN apk add --no-cache openjdk8
+# Install conda
+RUN wget --quiet https://repo.anaconda.com/miniconda/Miniconda3-4.5.11-Linux-x86_64.sh -O ~/miniconda.sh && \
+    /bin/bash ~/miniconda.sh -b -p /opt/conda && \
+    rm ~/miniconda.sh && \
+    /opt/conda/bin/conda clean -tipsy && \
+    ln -s /opt/conda/etc/profile.d/conda.sh /etc/profile.d/conda.sh && \
+    echo ". /opt/conda/etc/profile.d/conda.sh" >> ~/.bashrc && \
+    echo "conda activate base" >> ~/.bashrc
 
-# Set environment
-ENV JAVA_HOME /opt/jdk
-ENV PATH ${PATH}:${JAVA_HOME}/bin
+# Install packages
+RUN conda install --yes \
+    numpy==1.17.3 \
+    Keras==2.2.4 \
+    Pillow==6.2.1
 
-WORKDIR /konduit
+# Install Java
+RUN apt-get -f install && \
+    apt-get update && \
+    DEBIAN_FRONTEND=noninteractive \
+    apt-get -y install default-jdk && \
+    apt-get clean && \
+    rm -rf /var/lib/apt/lists/*
 
-# Install app dependencies
-COPY requirements.txt /konduit
-#RUN pip install -r requirements.txt
-
+# Copy files over
 # Copy over konduit.jar and dependencies
-COPY mnist /konduit/mnist
+COPY mnist /tmp/mnist
+
+ENV TINI_VERSION v0.16.1
+ADD https://github.com/krallin/tini/releases/download/${TINI_VERSION}/tini /usr/bin/tini
+RUN chmod +x /usr/bin/tini
 
 EXPOSE 65322
 
-CMD ["java", "-version"]
-#CMD tail -f /dev/null
+ENTRYPOINT [ "/usr/bin/tini", "--" ]
+CMD [ "/bin/bash" ]

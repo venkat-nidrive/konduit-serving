@@ -16,6 +16,8 @@
  * SPDX-License-Identifier: Apache-2.0
  ******************************************************************************/
 
+@Library('konduit-ci-scripts@bugfix/signing') _
+
 konduitServingPipeline()
 
 
